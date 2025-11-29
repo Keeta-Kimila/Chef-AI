@@ -133,7 +133,7 @@ if st.session_state.current_video_recipe:
             try:
                 # Call API
                 response_stream = gemini_client.models.generate_content_stream(
-                    model="gemini-2.0-flash-exp", 
+                    model="gemini-2.5-flash", 
                     contents=gemini_history,
                     config=types.GenerateContentConfig(
                         system_instruction=system_instruction
