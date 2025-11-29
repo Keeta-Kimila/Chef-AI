@@ -9,7 +9,6 @@ st.set_page_config(
     page_icon="👋",
 )
 
-
 @st.cache_resource
 def connect_datafood(name):
     mycon = st.connection(name, type=GSheetsConnection)
@@ -18,11 +17,12 @@ def connect_datafood(name):
 def load_datafood(_con):
     df = _con.read(usecols=[1,2,3])
     return df
-
+@st.cache_resource
+def connect_duckdb():
+    return duckdb.connect(database=':memory:')
 connect_googlesheet = connect_datafood("datafoods")
 CSV_FILE = load_datafood(connect_googlesheet)
-con = duckdb.connect(database=':memory:')
-
+con = connect_duckdb()
 
 st.write("# Best Thai recipe with any ingredients! 👋")
 st.sidebar.title("Recipe Book 📖")
@@ -213,4 +213,3 @@ if prompt := st.chat_input('Ask Anything..'):
 # ==============================================================================
 # END OF COMBINED CHAT CODE
 # ==============================================================================
-
