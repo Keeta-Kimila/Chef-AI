@@ -1,9 +1,7 @@
 import streamlit as st
 import duckdb
 from streamlit_gsheets import GSheetsConnection
-from google import genai
-from google.genai import types
-
+from pages.chat_mode import render_ai_chat
 st.set_page_config(
     page_title="Best Thai Recipe",
     page_icon="👋",
@@ -35,11 +33,11 @@ st.markdown(
     , with our AI helper, any ingredients that are Thai but are unable to be found in your countries
     can be substituted with the help of our AI chef guidance!
     **Select the recipe from our sidebar menu** to get started!
-    ### Have recipe from a Youtube video but no ingredients?
+    ### Or have your own recipe from a Youtube video and have no ingredients?
+    - Paste the video link to our AI and ask away! [streamlit.io](link)
 """
 )
 
-# THIS IS THE NEW LINKING CODE
 st.page_link("pages/YouTube_Chef.py", label="Click here to ask our AI Chef about substituting ingredients from a video!", icon="🎥")
 
 st.divider()
@@ -110,108 +108,39 @@ if selected_dish:
 # COMBINED CHAT CODE STARTS HERE
 # ==============================================================================
 
-st.divider()
+# 1. Initialize session state variables if they don't exist
+if 'chat_enabled' not in st.session_state:
+    st.session_state.chat_enabled = False
+# We will use 'recipe_data' to pass the selected dish details to the chat page/component
+if 'recipe_data' not in st.session_state:
+    st.session_state.recipe_data = {}
 
-st.header("Ask our AI Chef! 🤖")
-st.markdown(
-    """
-    Ask for ingredient substitutions, cooking tips, or anything else about Thai cuisine.
-    The AI is currently pre-loaded with the recipe details of **""" 
-    + (dish_name if selected_dish else "the dish you select in the sidebar") 
-    + """**.
-    """
+# 2. Update recipe data based on selection (from the main logic)
+st.session_state.recipe_data = {
+    "name": dish_name if selected_dish else "",
+    "ingredients": dish_ingredients if selected_dish else "No ingredients selected.",
+    "instructions": dish_instructions if selected_dish else "No instructions selected."
+}
+
+st.sidebar.divider()
+st.sidebar.title("AI Chef Mode 🤖")
+
+# 3. Create the toggle button in the sidebar
+st.session_state.chat_enabled = st.sidebar.toggle(
+    'Enable AI Chat Assistant',
+    value=st.session_state.chat_enabled,
+    key="chat_toggle_key"
 )
 
-# Configuration for Gemini
-GEMINI_MODEL = "gemini-2.5-flash"
-try:
-    # 1. Initialize Gemini Client
-    gemini_client = genai.Client(api_key=st.secrets.connections.geminiapi["GEMINI_API_KEY"])
-except (AttributeError, KeyError):
-    st.error("Gemini API key not found in secrets. Please configure `st.secrets.connections.geminiapi['GEMINI_API_KEY']`.")
-    st.stop()
-except Exception as e:
-    st.error(f"Failed to initialize Gemini Client: {e}")
-    st.stop()
-
-
-# 2. Set up System Instruction (Context)
-# The system instruction is dynamic based on the selected dish's details
-system_instruction = (
-    "Role: You are an expert Thai chef, specializing in this dish. "
-    "Your goal is to guide the user in cooking the selected recipe. "
-    f"The recipe name is: **{dish_name}**. "
-    f"The ingredients are: **{dish_ingredients}**. "
-    f"The instructions are: **{dish_instructions}**. "
-    "You must answer questions about ingredient substitutions, cooking techniques, and any related culinary questions. "
-    "Be polite, helpful, and answer in English. Constraints: Maintain your chef role."
-)
-
-# 3. Initialize Chat History in session_state
-if 'chat_messages' not in st.session_state:
-    st.session_state.chat_messages = [{"role": "model", "content": "Hello! I am your AI Thai chef. How can I help you with your cooking today?"}]
-    
-# Display chat messages from history on app rerun
-for message in st.session_state.chat_messages:
-    with st.chat_message(message['role']):
-        st.markdown(message['content'])
-
-if prompt := st.chat_input('Ask Anything..'):
-    # 1. User Message Handling
-    st.session_state.chat_messages.append({'role':'user','content':prompt})
-    with st.chat_message('user'):
-        st.write(prompt)
-        
-    # 2. Model Response Generation
-    with st.chat_message('model'):
-        # Convert Streamlit history format to Gemini API format
-        gemini_history = []
-        for message in st.session_state.chat_messages:
-            # Gemini API uses 'role: user' and 'role: model'
-            role = "user" if message["role"] == "user" else "model"
-            
-            # --- FIX APPLIED HERE ---
-            # Correctly create a types.Part object by passing 'text' keyword argument
-            # types.Part.from_text() is incorrect and causes the TypeError.
-            gemini_history.append(types.Content(role=role, parts=[types.Part(text=message["content"])]))
-            
-            # Alternative (simpler) way to write the same line, often used in chat apps:
-            # gemini_history.append({"role": role, "parts": [{"text": message["content"]}]})
-            
-        try:
-            # Call the streaming API
-            response_stream = gemini_client.models.generate_content_stream(
-                model=GEMINI_MODEL, 
-                contents=gemini_history,
-                config=types.GenerateContentConfig(
-                    system_instruction=system_instruction,
-                    thinking_config=types.ThinkingConfig(thinking_budget=-1)
-                )
-            )
-            
-            # Use a local variable for accumulating response content
-            response_content = ''
-            
-            # The generator function yields chunks and accumulates the full response
-            # Using a function to stream and accumulate
-            def stream_and_accumulate(stream_response):
-                global response_content
-                for chunk in stream_response:
-                    text = chunk.text
-                    response_content += text
-                    yield text
-                    
-            # Stream the response to the UI
-            stream = stream_and_accumulate(response_stream)
-            st.write_stream(stream)
-            
-            # 3. Add final assistant response to history
-            st.session_state.chat_messages.append({'role':'model','content':response_content})
-
-        except Exception as e:
-            st.error(f"Chatbot Error: {e}")
-            st.session_state.chat_messages.pop() # Remove last user message on error
+# 4. Logic to display the chat component or redirect (if needed)
+if st.session_state.chat_enabled:
+    st.sidebar.info("Chat mode is ON. Scroll down the main page to see the chat window!")
+    # NOTE: Since you want the chat on the main page, we will call a function 
+    # to render the chat when the toggle is ON.
 
 # ==============================================================================
 # END OF COMBINED CHAT CODE
 # ==============================================================================
+if st.session_state.chat_enabled:
+    # Pass the recipe data from session state to the chat component
+    render_ai_chat(st.session_state.recipe_data)
