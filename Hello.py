@@ -35,10 +35,12 @@ st.markdown(
     , with our AI helper, any ingredients that are Thai but are unable to be found in your countries
     can be substituted with the help of our AI chef guidance!
     **Select the recipe from our sidebar menu** to get started!
-    ### Or have your own recipe from a Youtube video and have no ingredients?
-    - Paste the video link to our AI and ask away! [streamlit.io](link)
+    ### Have recipe from a Youtube video but no ingredients?
 """
 )
+
+# THIS IS THE NEW LINKING CODE
+st.page_link("pages/YouTube_Chef.py", label="Click here to ask our AI Chef about substituting ingredients from a video!", icon="🎥")
 
 st.divider()
 
