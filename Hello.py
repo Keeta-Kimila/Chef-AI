@@ -1,8 +1,13 @@
 import streamlit as st
 import duckdb
-import csv
+from streamlit_gsheets import GSheetsConnection
 
-CSV_FILE = 'DATASET_That_food - Sheet1.csv'
+@st.cache_data
+def load_datafood(name):
+    mycon = st.connection(name, type=GSheetsConnection)
+    df = mycon.read(usecols=[1,2,3])
+    return df
+CSV_FILE = load_datafood("datafoods")
 con = duckdb.connect(database=':memory:')
 
 
@@ -32,7 +37,7 @@ st.divider()
 
 titles_query = f"""
     SELECT "name(eng)" 
-    FROM read_csv('{CSV_FILE}', header=True) 
+    FROM CSV_FILE
     WHERE "name(eng)" IS NOT NULL
 """
 try:
@@ -54,7 +59,7 @@ if selected_dish:
     # Query: Get ingredients and instructions for the specific dish
     detail_query = f"""
         SELECT "name(eng)", "condiments", "howto"
-        FROM read_csv('{CSV_FILE}', header=True)
+        FROM CSV_FILE
         WHERE "name(eng)" = ?
     """
     # We pass [selected_dish] as a parameter to prevent SQL injection/formatting errors
