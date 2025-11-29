@@ -1,7 +1,7 @@
 import streamlit as st
 import duckdb
 from streamlit_gsheets import GSheetsConnection
-from pages.chat_mode import render_ai_chat
+from chat_mode import render_ai_chat
 st.set_page_config(
     page_title="Best Thai Recipe",
     page_icon="👋",
@@ -38,7 +38,7 @@ st.markdown(
 """
 )
 
-st.page_link("pages/YouTube_Chef.py", label="Click here to ask our AI Chef about substituting ingredients from a video!", icon="🎥")
+# st.page_link("pages/YouTube_Chef.py", label="Click here to ask our AI Chef about substituting ingredients from a video!", icon="🎥")
 
 st.divider()
 
