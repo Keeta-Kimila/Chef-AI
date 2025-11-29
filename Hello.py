@@ -4,6 +4,12 @@ from streamlit_gsheets import GSheetsConnection
 from google import genai
 from google.genai import types
 
+st.set_page_config(
+    page_title="Best Thai Recipe",
+    page_icon="👋",
+)
+
+
 @st.cache_resource
 def connect_datafood(name):
     mycon = st.connection(name, type=GSheetsConnection)
@@ -17,12 +23,6 @@ connect_googlesheet = connect_datafood("datafoods")
 CSV_FILE = load_datafood(connect_googlesheet)
 con = duckdb.connect(database=':memory:')
 
-
-
-st.set_page_config(
-    page_title="Best Thai Recipe",
-    page_icon="👋",
-)
 
 st.write("# Best Thai recipe with any ingredients! 👋")
 st.sidebar.title("Recipe Book 📖")
@@ -213,3 +213,4 @@ if prompt := st.chat_input('Ask Anything..'):
 # ==============================================================================
 # END OF COMBINED CHAT CODE
 # ==============================================================================
+
