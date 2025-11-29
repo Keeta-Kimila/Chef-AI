@@ -4,12 +4,17 @@ from streamlit_gsheets import GSheetsConnection
 from google import genai
 from google.genai import types
 
-@st.cache_data
-def load_datafood(name):
+@st.cache_resource
+def connect_datafood(name):
     mycon = st.connection(name, type=GSheetsConnection)
-    df = mycon.read(usecols=[1,2,3])
+    return mycon
+@st.cache_data
+def load_datafood(_con):
+    df = _con.read(usecols=[1,2,3])
     return df
-CSV_FILE = load_datafood("datafoods")
+
+connect_googlesheet = connect_datafood("datafoods")
+CSV_FILE = load_datafood(connect_googlesheet)
 con = duckdb.connect(database=':memory:')
 
 
