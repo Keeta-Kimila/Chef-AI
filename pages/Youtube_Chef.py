@@ -6,6 +6,10 @@ from urllib.parse import urlparse, parse_qs
 
 st.set_page_config(page_title="YouTube AI Chef", page_icon="🎥")
 
+# Add a button to go back home
+st.page_link("test03.py", label="Back to Recipe Book", icon="🏠")
+st.divider()
+
 st.title("🎥 YouTube to Recipe Converter")
 st.markdown("Paste a cooking video link, and I'll extract the recipe AND chat with you about it!")
 
