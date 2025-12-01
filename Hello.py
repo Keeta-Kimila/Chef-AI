@@ -102,6 +102,8 @@ if selected_dish:
         else:
             st.info("No instructions available.")
 
+st.divider()
+
 # ==============================================================================
 # COMBINED CHAT CODE STARTS HERE
 # ==============================================================================
@@ -143,10 +145,12 @@ if st.session_state.chat_enabled:
 # 5. CONDITIONAL DISPLAY LOGIC
 # -----------------------------------------------------------------------------
 
+
+
 # This is where the YouTube link should be placed, right before the chat component rendering.
 if st.session_state.chat_enabled:
     # 5a. HIDE/SHOW THE YOUTUBE LINK
-    st.markdown("### Or have a Youtube video? Enable AI mode to extract and ask about the recipe!")
+    st.markdown("## Ask and extract a Youtube recipe!")
     st.page_link("pages/YouTube_Chef.py", label="Click here to ask our AI Chef about substituting ingredients from a video!", icon="🎥")
     
     # 5b. RENDER THE RECIPE CHAT COMPONENT
