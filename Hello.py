@@ -33,11 +33,10 @@ st.markdown(
     , with our AI helper, any ingredients that are Thai but are unable to be found in your countries
     can be substituted with the help of our AI chef guidance!
     **Select the recipe from our sidebar menu** to get started!
-    ### Or have a Youtube video? Enable AI mode to extract and ask about the recipe!
 """
 )
 
-st.page_link("pages/YouTube_Chef.py", label="Click here to ask our AI Chef about substituting ingredients from a video!", icon="🎥")
+
 
 st.divider()
 
@@ -140,6 +139,15 @@ if st.session_state.chat_enabled:
 # ==============================================================================
 # END OF COMBINED CHAT CODE
 # ==============================================================================
+# -----------------------------------------------------------------------------
+# 5. CONDITIONAL DISPLAY LOGIC
+# -----------------------------------------------------------------------------
+
+# This is where the YouTube link should be placed, right before the chat component rendering.
 if st.session_state.chat_enabled:
-    # Pass the recipe data from session state to the chat component
+    # 5a. HIDE/SHOW THE YOUTUBE LINK
+    st.markdown("### Or have a Youtube video? Enable AI mode to extract and ask about the recipe!")
+    st.page_link("pages/YouTube_Chef.py", label="Click here to ask our AI Chef about substituting ingredients from a video!", icon="🎥")
+    
+    # 5b. RENDER THE RECIPE CHAT COMPONENT
     render_ai_chat(st.session_state.recipe_data)
