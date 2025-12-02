@@ -7,7 +7,10 @@ from urllib.parse import urlparse, parse_qs
 st.set_page_config(page_title="YouTube AI Chef", page_icon="🎥")
 
 # Add a button to go back home
-st.page_link("test03.py", label="Back to Recipe Book", icon="🏠")
+col1, col2 = st.columns([1, 2])
+with col1:
+    with st.container(border=True):
+        st.page_link("main.py", label="**Back to Recipe Book**", icon="🏠",use_container_width=True)
 st.divider()
 
 st.title("🎥 YouTube to Recipe Converter")
@@ -152,3 +155,4 @@ if st.session_state.current_video_recipe:
 
             except Exception as e:
                 st.error(f"Chatbot Error: {e}")
+
