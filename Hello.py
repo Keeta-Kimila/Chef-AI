@@ -151,7 +151,15 @@ if st.session_state.chat_enabled:
 if st.session_state.chat_enabled:
     # 5a. HIDE/SHOW THE YOUTUBE LINK
     st.markdown("## Ask and extract a Youtube recipe!")
-    st.page_link("pages/YouTube_Chef.py", label="Click here to ask our AI Chef about substituting ingredients from a video!", icon="🎥")
+    col1, col2 = st.columns([1, 0.20])
+    with col1:
+        with st.container(border=True):
+                st.page_link(
+                    "pages/YouTube_Chef.py", 
+                    label="**Click here to ask our AI Chef about substituting ingredients from a video!**", 
+                    icon="🎥"
+                )
     
     # 5b. RENDER THE RECIPE CHAT COMPONENT
     render_ai_chat(st.session_state.recipe_data)
+
