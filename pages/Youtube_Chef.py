@@ -46,7 +46,7 @@ if st.button("Extract Recipe 👨‍🍳") and video_url:
         with st.spinner("Watching video and taking notes..."):
             try:
                 # A. Get Transcript
-                transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
+                transcript_list = YouTubeTranscriptApi.get_transcript(video_id, languages=['th', 'en'])
                 full_text = " ".join([t['text'] for t in transcript_list])
                 
                 # B. Call Gemini to Extract Recipe
@@ -144,10 +144,16 @@ if st.session_state.current_video_recipe:
                     )
                 )
                 
-                # Stream Response
-                response_content = st.write_stream(response_stream)
-                
-                # Save to history
+                # 2. DEFINE A HELPER TO EXTRACT TEXT (This is new!)
+                def stream_parser(stream):
+                    for chunk in stream:
+                        if chunk.text:
+                            yield chunk.text
+
+                # 3. Stream the CLEAN text
+                response_content = st.write_stream(stream_parser(response_stream))
+                    
+                # 4. Save to history
                 st.session_state.youtube_chat_history.append({'role':'model','content':response_content})
 
             except Exception as e:
