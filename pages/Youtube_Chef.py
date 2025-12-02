@@ -10,7 +10,7 @@ st.set_page_config(page_title="YouTube AI Chef", page_icon="🎥")
 col1, col2 = st.columns([1, 2])
 with col1:
     with st.container(border=True):
-        st.page_link("test03.py", label="**Back to Recipe Book**", icon="🏠",use_container_width=True)
+        st.page_link("main.py", label="**Back to Recipe Book**", icon="🏠",width="stretch")
 st.divider()
 
 st.title("🎥 YouTube to Recipe Converter")
