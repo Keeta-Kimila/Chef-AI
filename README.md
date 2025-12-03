@@ -58,11 +58,11 @@ In the ".streamlit" folder: Have two files 1. "config.toml" and 2. "secrets.toml
 
 # Visualization (Streamlit + Plotly)
 
-Chef-AI uses **Streamlit** and **Plotly** to help users explore Thai recipes and ingredients in a more visual and interactive way, especially on the page **“Which menu for you”**.
+Chef-AI uses **Streamlit** and **Plotly** to help users explore Thai recipes and ingredients in a more visual and interactive way, especially on the page **“For you menu”**.
 
 ### 1. Recipe Distribution by Main Protein
 
-On the **“Which menu for you”** page, the app displays a Plotly **bar chart** that shows how many recipes belong to each main protein group, for example:
+On the **“For you menu”** page, the app displays a Plotly **bar chart** that shows how many recipes belong to each main protein group, for example:
 
 - Pork  
 - Beef  
