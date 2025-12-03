@@ -12,7 +12,7 @@ inject_food_theme()
 col1, col2 = st.columns([1, 1.95])
 with col1:
     with st.container(border=True):
-        st.page_link("main.py", label="**Back to Recipe Book**", icon="🏠", width="stretch")
+        st.page_link("main.py", label="**Back to Recipe Book**", icon="🏠", use_container_width=True)
 st.divider()
 
 # --- 1. SETUP DATABASE CONNECTION ---
@@ -79,7 +79,7 @@ fig.update_layout(
     plot_bgcolor='rgba(0,0,0,0)'
 )
 
-selected_point = st.plotly_chart(fig, width="stretch", on_select="rerun")
+selected_point = st.plotly_chart(fig, use_container_width=True, on_select="rerun")
 
 
 # ==============================================================================
@@ -108,7 +108,7 @@ else:
 
 try:
     df_result = con.execute(table_query).fetchdf()
-    st.dataframe(df_result, width="stretch")
+    st.dataframe(df_result, use_container_width=True)
 except Exception as e:
     st.error(f"Error fetching data: {e}")
 
