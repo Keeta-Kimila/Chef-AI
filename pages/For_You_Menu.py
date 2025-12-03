@@ -2,14 +2,11 @@ import streamlit as st
 import duckdb
 from streamlit_gsheets import GSheetsConnection
 import plotly.graph_objects as go
-from google import genai
-from google.genai import types
-# Import the theme injector
-from chat_mode import inject_food_theme
+from chat_mode import render_ai_chat, inject_food_theme
 
 st.set_page_config(page_title="Menu Analyzer", page_icon="📊")
 
-# --- APPLY VISUAL THEME ---
+# APPLY THEME
 inject_food_theme()
 
 col1, col2 = st.columns([1, 2])
@@ -61,22 +58,25 @@ for cat in categories:
     result = con.execute(query).fetchone()
     counts.append(result[0] if result else 0)
 
-# Create Plotly Bar Chart with THEMED COLORS
+# Updated chart colors for theme
 fig = go.Figure(data=[go.Bar(
     x=categories,
     y=counts,
-    # Updated colors to match the Food/Spice Theme (Reds, Oranges, Warm tones)
     marker_color=['#E74C3C', '#C0392B', '#E67E22', '#F39C12', '#F5B041', '#D35400'] 
 )])
+
+# Chart styling based on theme
+text_col = "#E0E0E0" if st.session_state.get('dark_mode', False) else "#2C3E50"
 
 fig.update_layout(
     title="Recipe Count by Main Ingredient",
     xaxis_title="Ingredient",
     yaxis_title="Number of Recipes",
     clickmode='event+select',
-    # Update font in chart to match theme
-    font=dict(family="Lato, sans-serif"),
-    title_font=dict(family="Merriweather, serif")
+    font=dict(family="Lato, sans-serif", color=text_col),
+    title_font=dict(family="Merriweather, serif", color="#E67E22"),
+    paper_bgcolor='rgba(0,0,0,0)', # Transparent background
+    plot_bgcolor='rgba(0,0,0,0)'
 )
 
 selected_point = st.plotly_chart(fig, width="stretch", on_select="rerun")
@@ -119,7 +119,6 @@ except Exception as e:
 
 if show_chat_section:
     st.divider()
-    st.header("3. AI Menu Consultant 🤖")
     
     titles_query = 'SELECT "name(eng)" FROM CSV_FILE WHERE "name(eng)" IS NOT NULL'
     try:
@@ -136,64 +135,17 @@ if show_chat_section:
     )
 
     if selected_dish_menu:
-        
+        # Reuse logic
         detail_query = 'SELECT "name(eng)", "condiments", "howto" FROM CSV_FILE WHERE "name(eng)" = ?'
         res = con.execute(detail_query, [selected_dish_menu]).fetchone()
         
-        d_name = res[0] if res else ""
-        d_ing = res[1] if res else ""
-        d_how = res[2] if res else ""
+        dish_data_for_chat = {
+            "name": res[0] if res else "",
+            "ingredients": res[1] if res else "",
+            "instructions": res[2] if res else ""
+        }
 
-        GEMINI_MODEL = "gemini-2.5-flash"
-        
-        try:
-            if "geminiapi" in st.secrets.connections:
-                client = genai.Client(api_key=st.secrets.connections.geminiapi["GEMINI_API_KEY"])
-            else:
-                st.error("Gemini API Key not found.")
-                st.stop()
-        except Exception as e:
-            st.error(f"Error init Gemini: {e}")
-            st.stop()
+        render_ai_chat(dish_data_for_chat)
 
-        system_instruction = f"""Context: You are a globally recognized expert Thai chef... (Instructions hidden for brevity - logic preserved) ..."""
-
-        if 'chat_messages_menu' not in st.session_state:
-            st.session_state.chat_messages_menu = [{"role": "model", "content": f"I see you are interested in **{d_name}**. How can I help you with this dish?"}]
-
-        for msg in st.session_state.chat_messages_menu:
-            with st.chat_message(msg['role']):
-                st.markdown(msg['content'])
-
-        if prompt := st.chat_input(f"Ask about {d_name}..."):
-            st.session_state.chat_messages_menu.append({'role': 'user', 'content': prompt})
-            with st.chat_message('user'):
-                st.write(prompt)
-
-            with st.chat_message('model'):
-                gemini_history = []
-                for m in st.session_state.chat_messages_menu:
-                    role = "user" if m["role"] == "user" else "model"
-                    gemini_history.append(types.Content(role=role, parts=[types.Part(text=m["content"])]))
-                
-                try:
-                    response_stream = client.models.generate_content_stream(
-                        model=GEMINI_MODEL,
-                        contents=gemini_history,
-                        config=types.GenerateContentConfig(
-                            system_instruction=system_instruction
-                        )
-                    )
-                    
-                    def stream_parser(stream):
-                        for chunk in stream:
-                            if chunk.text:
-                                yield chunk.text
-                                
-                    full_response = st.write_stream(stream_parser(response_stream))
-                    st.session_state.chat_messages_menu.append({'role': 'model', 'content': full_response})
-                    
-                except Exception as e:
-                    st.error(f"Error: {e}")
     else:
         st.info("Please select a dish above to start the chat.")
