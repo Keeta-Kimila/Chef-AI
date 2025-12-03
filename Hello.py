@@ -57,6 +57,13 @@ selected_dish = st.sidebar.selectbox(
     "Dishes",
     options=titles_list
 )
+with st.sidebar:
+    # Page link in sidebar
+    st.page_link(
+        "pages/Which_menu_for_you.py",
+        label="**Click here to see menu**",
+        icon="🍱"
+    )
 
 ##----Main----##
 
@@ -162,4 +169,3 @@ if st.session_state.chat_enabled:
     
     # 5b. RENDER THE RECIPE CHAT COMPONENT
     render_ai_chat(st.session_state.recipe_data)
-
