@@ -4,7 +4,6 @@ from streamlit_gsheets import GSheetsConnection
 import plotly.graph_objects as go
 from google import genai
 from google.genai import types
-import pandas as pd
 
 st.set_page_config(page_title="Menu Analyzer", page_icon="📊")
 
@@ -21,7 +20,7 @@ def connect_datafood(name):
 
 @st.cache_data
 def load_datafood(_con):
-    df = _con.read(usecols=[1,2,3])
+    df = _con.read(usecols=[1,2,3,4,5,6,7,8,9])
     return df
 
 @st.cache_resource
@@ -51,39 +50,10 @@ counts = []
 
 # Calculate counts using SQL queries on the DuckDB connection
 for cat in categories:
-    if cat == 'Fish':
-        # Specific logic for fish including snakehead or mackerel
-        query = f"""
-            SELECT count(*) FROM CSV_FILE 
-            WHERE "condiments" ILIKE '%mackerel%' 
-            OR "condiments" ILIKE '%snakehead%' 
-        """
-    elif cat == 'Other':
-        query = f"""
-            SELECT count(*) FROM CSV_FILE
-            WHERE "condiments" NOT ILIKE '%mackerel%'
-            AND "condiments" NOT ILIKE '%snakehead%'
-            AND "condiments" NOT ILIKE '%pork%'
-            AND "condiments" NOT ILIKE '%beef%'
-            AND "condiments" NOT ILIKE '%prawn%'
-            AND "condiments" NOT ILIKE '%chicken%';
-        """
-    elif cat == 'Pork':
-        query = f"""
-            SELECT count(*) FROM CSV_FILE
-            WHERE "condiments" ILIKE '%pork%'
-            AND (
-                    "condiments" NOT ILIKE '%mackerel%' AND
-                    "condiments" NOT ILIKE '%snakehead%' AND
-                    "condiments" NOT ILIKE '%beef%' AND
-                    "condiments" NOT ILIKE '%chicken%'
-                );
-        """
-    else:
-        query = f"""
-            SELECT count(*) FROM CSV_FILE 
-            WHERE "condiments" ILIKE '%{cat}%'
-        """
+    query = f"""
+        SELECT count(*) FROM CSV_FILE 
+        WHERE "{cat}" = 1;
+    """
     
     result = con.execute(query).fetchone()
     counts.append(result[0] if result else 0)
@@ -104,7 +74,7 @@ fig.update_layout(
 
 # Render the chart with selection enabled
 # The 'on_select="rerun"' allows us to detect clicks and update the table below
-selected_point = st.plotly_chart(fig, width="stretch", on_select="rerun")
+selected_point = st.plotly_chart(fig, use_container_width=True, on_select="rerun")
 
 
 # ==============================================================================
@@ -123,42 +93,11 @@ if selected_point and selected_point['selection']['points']:
 # Build the Query for the Table
 if selected_category:
     st.info(f"Showing recipes containing: **{selected_category.capitalize()}**")
-    if selected_category == 'Fish':
-        table_query = """
-            SELECT "name(eng)" AS Menu 
-            FROM CSV_FILE 
-            WHERE "condiments" ILIKE '%mackerel%' 
-            OR "condiments" ILIKE '%snakehead%' 
-        """
-    elif selected_category == 'Other':
-        table_query = f"""
-            SELECT "name(eng)" AS Menu
-            FROM CSV_FILE
-            WHERE "condiments" NOT ILIKE '%mackerel%'
-            AND "condiments" NOT ILIKE '%snakehead%'
-            AND "condiments" NOT ILIKE '%pork%'
-            AND "condiments" NOT ILIKE '%beef%'
-            AND "condiments" NOT ILIKE '%prawn%'
-            AND "condiments" NOT ILIKE '%chicken%';
-        """
-    elif selected_category == 'Pork':
-        table_query = f"""
-            SELECT "name(eng)" AS Menu
-            FROM CSV_FILE
-            WHERE "condiments" ILIKE '%pork%'
-            AND (
-                    "condiments" NOT ILIKE '%mackerel%' AND
-                    "condiments" NOT ILIKE '%snakehead%' AND
-                    "condiments" NOT ILIKE '%beef%' AND
-                    "condiments" NOT ILIKE '%chicken%'
-                );
-        """
-    else:
-        table_query = f"""
-            SELECT "name(eng)" AS Menu
-            FROM CSV_FILE 
-            WHERE "condiments" ILIKE '%{selected_category}%'
-        """
+    table_query = f"""
+        SELECT "name(eng)" AS Menu
+        FROM CSV_FILE 
+        WHERE "{selected_category}" = 1;
+    """
 else:
     st.write("Displaying all recipes containing the analyzed ingredients (Click a bar above to filter).")
     # Query to show all rows that match ANY of the categories
@@ -169,7 +108,7 @@ else:
 
 try:
     df_result = con.execute(table_query).fetchdf()
-    st.dataframe(df_result, width="stretch")
+    st.dataframe(df_result, use_container_width=True)
 except Exception as e:
     st.error(f"Error fetching data: {e}")
 
