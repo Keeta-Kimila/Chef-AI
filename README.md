@@ -1,6 +1,9 @@
 # Chef-AI: Your Personal Thai Food Assistant
 Missing Thai food but don’t know how to cook or adjust the flavors? Let Chef-AI guide you!
 
+<br>
+<br>
+
 # Issues and motivation
 * Thai cuisine is loved worldwide for its balance of sweet, sour, salty, and spicy flavors.
 * Many people miss authentic Thai food but lack cooking skills or knowledge of proper condiments.
