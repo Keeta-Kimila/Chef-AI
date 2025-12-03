@@ -3,22 +3,13 @@ from google import genai
 from google.genai import types
 from youtube_transcript_api import YouTubeTranscriptApi
 from urllib.parse import urlparse, parse_qs
+# IMPORT SHARED THEME
+from chat_mode import inject_food_theme
 
 st.set_page_config(page_title="YouTube AI Chef", page_icon="🎥")
 
-# --- APPLY VISUAL THEME (Local Injection for Standalone Safety) ---
-st.markdown("""
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Lato:wght@400;700&display=swap');
-    html, body, [class*="css"] { font-family: 'Lato', sans-serif; }
-    h1, h2, h3 { font-family: 'Merriweather', serif !important; color: #D35400 !important; font-weight: 700 !important; }
-    .stButton > button { background-color: #E67E22; color: white !important; border-radius: 12px; border: 1px solid #D35400; font-family: 'Lato', sans-serif; font-weight: bold; }
-    .stButton > button:hover { background-color: #D35400; transform: scale(1.02); }
-    .stTextInput > div > div > input { border-radius: 10px; border: 1px solid #F5B041; }
-    [data-testid="stSidebar"] { background-color: #FEF9E7; border-right: 1px solid #F5CBA7; }
-    @media (prefers-color-scheme: dark) { [data-testid="stSidebar"] { background-color: #1A1A1A; border-right: 1px solid #333; } }
-</style>
-""", unsafe_allow_html=True)
+# APPLY VISUAL THEME (This fixes the input and button colors)
+inject_food_theme()
 
 # Add a button to go back home
 col1, col2 = st.columns([1, 2])
@@ -28,9 +19,14 @@ with col1:
 st.divider()
 
 st.title("🎥 YouTube to Recipe Converter")
+
+# Dynamic styling for the intro box logic
+box_bg = "#2C2C2C" if st.session_state.get('dark_mode', False) else "rgba(230, 126, 34, 0.1)"
+text_col = "#E0E0E0" if st.session_state.get('dark_mode', False) else "#2C3E50"
+
 st.markdown(
-    """
-    <div style="background-color: rgba(230, 126, 34, 0.1); padding: 15px; border-radius: 10px;">
+    f"""
+    <div style="padding: 15px; border-radius: 10px; border: 1px solid #E67E22; background-color: {box_bg}; color: {text_col};">
     Paste a cooking video link below, and I'll extract the recipe AND chat with you about it!
     </div>
     """, unsafe_allow_html=True
