@@ -10,10 +10,9 @@ Users will be able to search and find the Thai food they want, and recreate it w
 <br>
 
 # Issues and motivation
-* Thai cuisine is loved worldwide for its balance of sweet, sour, salty, and spicy flavors.
-* Many people miss authentic Thai food but lack cooking skills or knowledge of proper condiments.
-* Adapting recipes without guidance often leads to unsatisfying results.
-* There’s a need for a system that helps non-experts cook and enjoy Thai dishes easily.
+The team want to create something unique, as Thai people. We want to share the Thai cuisine, which is loved worldwide for its flavors, but many people lack the cooking skills and knowledge of proper condiments, which can result in unsatisfying results.
+We want to create something that can be used to help solve this problem and spread the Thai cullinary, and recipe that we, Thai people, have been enjoying in our everyday's life.
+
 
 # Objective
 * To provide users with a tool that recommends Thai recipes tailored to their taste.
