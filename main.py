@@ -139,7 +139,7 @@ if st.session_state.chat_enabled:
 
 if st.session_state.chat_enabled:
     st.markdown("## Ask and extract a Youtube recipe!")
-    col1, col2 = st.columns([1, 0.20])
+    col1, col2 = st.columns([1, 0.12])
     with col1:
         with st.container(border=True):
                 st.page_link(
