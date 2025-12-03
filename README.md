@@ -54,3 +54,9 @@ In the pages folder:
 
 In the .streamlit folder:
 
+<br>
+
+## Dataset
+
+https://huggingface.co/datasets/pythainlp/thai_food_v1.0
+
