@@ -1,11 +1,16 @@
 import streamlit as st
 import duckdb
 from streamlit_gsheets import GSheetsConnection
-from chat_mode import render_ai_chat
+# Import both the renderer and the theme injector
+from chat_mode import render_ai_chat, inject_food_theme
+
 st.set_page_config(
     page_title="Best Thai Recipe",
-    page_icon="👋",
+    page_icon="🌶️", # Updated icon to match food theme
 )
+
+# --- APPLY VISUAL THEME ---
+inject_food_theme()
 
 @st.cache_resource
 def connect_datafood(name):
@@ -22,21 +27,22 @@ connect_googlesheet = connect_datafood("datafoods")
 CSV_FILE = load_datafood(connect_googlesheet)
 con = connect_duckdb()
 
-st.write("# Best Thai recipe with any ingredients! 👋")
+st.write("# Best Thai recipe with any ingredients! 🥘") 
 st.sidebar.title("Recipe Book 📖")
 st.sidebar.write("Select a dish below:")
 
 
 st.markdown(
     """
+    <div style="background-color: rgba(230, 126, 34, 0.1); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
     Our website allows anyone from any part of the world to be able to make Thai cuisine
     , with our AI helper, any ingredients that are Thai but are unable to be found in your countries
     can be substituted with the help of our AI chef guidance!
-    **Select the recipe from our sidebar menu** to get started!
-"""
+    <br><br>
+    <strong>Select the recipe from our sidebar menu to get started!</strong>
+    </div>
+    """, unsafe_allow_html=True
 )
-
-
 
 st.divider()
 
@@ -47,7 +53,6 @@ titles_query = f"""
 """
 try:
     titles_result = con.execute(titles_query).fetchall()
-    # Flatten list of tuples [('Dish A',), ('Dish B',)] -> ['Dish A', 'Dish B']
     titles_list = [row[0] for row in titles_result]
 except Exception as e:
     st.error(f"Error reading database: {e}")
@@ -58,7 +63,6 @@ selected_dish = st.sidebar.selectbox(
     options=titles_list
 )
 with st.sidebar:
-    # Page link in sidebar
     st.page_link(
         "pages/Which_menu_for_you.py",
         label="**Click here to see menu**",
@@ -68,16 +72,13 @@ with st.sidebar:
 ##----Main----##
 
 if selected_dish:
-    # Query: Get ingredients and instructions for the specific dish
     detail_query = f"""
         SELECT "name(eng)", "condiments", "howto"
         FROM CSV_FILE
         WHERE "name(eng)" = ?
     """
-    # We pass [selected_dish] as a parameter to prevent SQL injection/formatting errors
     result = con.execute(detail_query, [selected_dish]).fetchone()
     
-    # Initialize variables for chat system instruction later
     dish_name = ""
     dish_ingredients = ""
     dish_instructions = ""
@@ -87,23 +88,18 @@ if selected_dish:
         dish_ingredients = result[1] if result[1] else "No ingredients listed."
         dish_instructions = result[2] if result[2] else "No instructions available."
 
-        # --- Display Title ---
         st.header(dish_name)
 
-        # --- Display Ingredients ---
         st.subheader("🛒 Ingredients")
-        # Your CSV uses newlines to separate ingredients, so we split by \n
         if dish_ingredients and dish_ingredients != "No ingredients listed.":
             for line in dish_ingredients.split('\n'):
                 line = line.strip()
-                if line:  # Only display non-empty lines
+                if line:
                     st.write(f"- {line}")
         else:
             st.info("No ingredients listed.")
 
-        # --- Display Instructions ---
         st.subheader("👨‍🍳 How to make")
-        # Note: The 'howto' column in your current CSV seems to be in Thai.
         if dish_instructions and dish_instructions != "No instructions available.":
             st.write(dish_instructions)
         else:
@@ -115,14 +111,12 @@ st.divider()
 # COMBINED CHAT CODE STARTS HERE
 # ==============================================================================
 
-# 1. Initialize session state variables if they don't exist
 if 'chat_enabled' not in st.session_state:
     st.session_state.chat_enabled = False
-# We will use 'recipe_data' to pass the selected dish details to the chat page/component
+
 if 'recipe_data' not in st.session_state:
     st.session_state.recipe_data = {}
 
-# 2. Update recipe data based on selection (from the main logic)
 st.session_state.recipe_data = {
     "name": dish_name if selected_dish else "",
     "ingredients": dish_ingredients if selected_dish else "No ingredients selected.",
@@ -132,31 +126,20 @@ st.session_state.recipe_data = {
 st.sidebar.divider()
 st.sidebar.title("AI Chef Mode 🤖")
 
-# 3. Create the toggle button in the sidebar
 st.session_state.chat_enabled = st.sidebar.toggle(
     'Enable AI Chat Assistant',
     value=st.session_state.chat_enabled,
     key="chat_toggle_key"
 )
 
-# 4. Logic to display the chat component or redirect (if needed)
 if st.session_state.chat_enabled:
     st.sidebar.info("Chat mode is ON. Scroll down the main page to see the chat window!")
-    # NOTE: Since you want the chat on the main page, we will call a function 
-    # to render the chat when the toggle is ON.
 
-# ==============================================================================
-# END OF COMBINED CHAT CODE
-# ==============================================================================
 # -----------------------------------------------------------------------------
 # 5. CONDITIONAL DISPLAY LOGIC
 # -----------------------------------------------------------------------------
 
-
-
-# This is where the YouTube link should be placed, right before the chat component rendering.
 if st.session_state.chat_enabled:
-    # 5a. HIDE/SHOW THE YOUTUBE LINK
     st.markdown("## Ask and extract a Youtube recipe!")
     col1, col2 = st.columns([1, 0.20])
     with col1:
@@ -167,5 +150,4 @@ if st.session_state.chat_enabled:
                     icon="🎥"
                 )
     
-    # 5b. RENDER THE RECIPE CHAT COMPONENT
     render_ai_chat(st.session_state.recipe_data)
