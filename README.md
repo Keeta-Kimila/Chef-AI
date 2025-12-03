@@ -1,5 +1,5 @@
 # Chef-AI: Your Personal Thai Food Assistant
-This is a personal group project with the aim of sharing the culture of Thai cuisine with the world, by removing the biggest barrier to entry: ingredient availability.
+This is a personal group project with the aim of sharing the culture of Thai cuisine with the world, by removing the biggest barrier to entry: <ins>**ingredient availability**</ins>.
 
 With the help of our AI, focusing on its specialization in harmony of sweet, sour, salty and spicy flavors, as well as its wide knowledge in ingredient substitution, you will be able to create any Thai dish with ingredients widely availabe in your country!
 
