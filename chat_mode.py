@@ -2,10 +2,90 @@ import streamlit as st
 from google import genai
 from google.genai import types
 
+def inject_food_theme():
+    """
+    Injects global CSS for the Food/Recipe Theme.
+    This ensures visual uniformity across all pages.
+    """
+    st.markdown("""
+    <style>
+        /* IMPORT FONTS */
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Lato:wght@400;700&display=swap');
+
+        /* GLOBAL TYPOGRAPHY */
+        html, body, [class*="css"] {
+            font-family: 'Lato', sans-serif;
+        }
+        
+        /* HEADERS (Menu Style) */
+        h1, h2, h3 {
+            font-family: 'Merriweather', serif !important;
+            color: #D35400 !important; /* Pumpkin Spice Color */
+            font-weight: 700 !important;
+        }
+        
+        /* BUTTONS */
+        .stButton > button {
+            background-color: #E67E22;
+            color: white !important;
+            border-radius: 12px;
+            border: 1px solid #D35400;
+            font-family: 'Lato', sans-serif;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .stButton > button:hover {
+            background-color: #D35400;
+            border-color: #A04000;
+            transform: scale(1.02);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* INPUT FIELDS */
+        .stTextInput > div > div > input, .stSelectbox > div > div > div {
+            border-radius: 10px;
+            border: 1px solid #F5B041;
+            background-color: rgba(255, 255, 255, 0.05); /* Subtle transparency */
+        }
+        .stTextInput > div > div > input:focus {
+            border-color: #D35400;
+            box-shadow: 0 0 0 1px #D35400;
+        }
+
+        /* SIDEBAR styling */
+        [data-testid="stSidebar"] {
+            background-color: #FEF9E7; /* Light Cream for Light Mode */
+            border-right: 1px solid #F5CBA7;
+        }
+        /* Dark Mode Sidebar Override */
+        @media (prefers-color-scheme: dark) {
+            [data-testid="stSidebar"] {
+                background-color: #1A1A1A;
+                border-right: 1px solid #333;
+            }
+        }
+
+        /* CARD/CONTAINER STYLING */
+        [data-testid="stVerticalBlock"] > [style*="flex-direction: column;"] > [data-testid="stVerticalBlock"] {
+            background-color: rgba(255, 255, 255, 0.02);
+            border-radius: 15px;
+            padding: 10px;
+        }
+        
+        /* PAGE LINKS (Buttons) */
+        a[href] {
+            text-decoration: none;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
 def render_ai_chat(dish_data):
     """
     Renders the AI Chat interface based on the provided recipe data.
     """
+    # Apply the theme locally if this function is called alone, 
+    # but usually main.py handles the injection. 
+    # We leave this specific call out to avoid double injection if main.py does it.
     
     # Configuration for Gemini
     GEMINI_MODEL = "gemini-2.5-flash"
@@ -19,12 +99,12 @@ def render_ai_chat(dish_data):
 
     st.header("Ask our AI Chef! 🤖")
     st.markdown(
-        """
+        f"""
+        <div style="background-color: rgba(230, 126, 34, 0.1); padding: 15px; border-radius: 10px; border-left: 5px solid #E67E22;">
         Ask for ingredient substitutions, cooking tips, or anything else about Thai cuisine.
-        The AI is currently pre-loaded with the recipe details of **""" 
-        + (dish_name if dish_name else "the dish you select in the sidebar") 
-        + """**.
-        """
+        The AI is currently pre-loaded with the recipe details of <strong>{dish_name if dish_name else "the dish you select in the sidebar"}</strong>.
+        </div>
+        """, unsafe_allow_html=True
     )
     
     try:
@@ -56,8 +136,7 @@ def render_ai_chat(dish_data):
                 The initial guidance provided must be based specifically on the Recipe_Data provided above, but can be substituted if the recipe does not make sense or is not up to Thai standard.
     """
 
-
-    # 3. Initialize Chat History in session_state (use a specific key for this component)
+    # 3. Initialize Chat History
     if 'chat_messages' not in st.session_state:
         st.session_state.chat_messages = [{"role": "model", "content": "Hello! I am your personal AI chef. How can I help you with your cooking today?"}]
         
@@ -78,11 +157,9 @@ def render_ai_chat(dish_data):
             gemini_history = []
             for message in st.session_state.chat_messages:
                 role = "user" if message["role"] == "user" else "model"
-                # Correct way to create a Part object
                 gemini_history.append(types.Content(role=role, parts=[types.Part(text=message["content"])]))
                 
             try:
-                # Call the streaming API
                 response_stream = gemini_client.models.generate_content_stream(
                     model=GEMINI_MODEL, 
                     contents=gemini_history,
@@ -92,10 +169,8 @@ def render_ai_chat(dish_data):
                     )
                 )
                 
-                # Use a local variable for accumulating response content
                 response_content = ''
                 
-                # The generator function yields chunks and accumulates the full response
                 def stream_and_accumulate(stream_response):
                     nonlocal response_content
                     for chunk in stream_response:
@@ -103,13 +178,11 @@ def render_ai_chat(dish_data):
                         response_content += text
                         yield text
                         
-                # Stream the response to the UI
                 stream = stream_and_accumulate(response_stream)
                 st.write_stream(stream)
                 
-                # 3. Add final assistant response to history
                 st.session_state.chat_messages.append({'role':'model','content':response_content})
 
             except Exception as e:
                 st.error(f"Chatbot Error: {e}")
-                st.session_state.chat_messages.pop() # Remove last user message on error
+                st.session_state.chat_messages.pop()
