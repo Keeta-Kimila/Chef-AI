@@ -114,7 +114,7 @@ try:
     df_result.index = df_result.index + 1 
     
     # Display with width="stretch" (fixing the warning you saw earlier)
-    st.dataframe(df_result, width="stretch")
+    st.dataframe(df_result, use_container_width=True)
     
 except Exception as e:
     st.error(f"Error fetching data: {e}")
@@ -156,3 +156,4 @@ if show_chat_section:
 
     else:
         st.info("Please select a dish above to start the chat.")
+
