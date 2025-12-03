@@ -14,7 +14,7 @@ inject_food_theme()
 col1, col2 = st.columns([1, 1.95])
 with col1:
     with st.container(border=True):
-        st.page_link("main.py", label="**Back to Recipe Book**", icon="🏠", width="stretch")
+        st.page_link("main.py", label="**Back to Recipe Book**", icon="🏠", use_container_width=True)
 st.divider()
 
 st.title("🎥 YouTube to Recipe Converter")
