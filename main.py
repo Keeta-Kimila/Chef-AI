@@ -66,7 +66,7 @@ selected_dish = st.sidebar.selectbox(
 )
 with st.sidebar:
     st.page_link(
-        "pages/Which_menu_for_you.py",
+        "pages/For_You_Menu.py",
         label="**See all the ingredients**",
         icon="🍱"
     )
