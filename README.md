@@ -18,6 +18,8 @@ We want to create something that can be used to help solve this problem and spre
 Make Thai cooking accessible to everyone, whether they are from a country that is hard to find Thai ingredients and help suggest adjustments to ingredients that will still deliver Thai cuisine while keeping the ingredients local to their country of origin
 
 <br>
+
+
 # Solution (Methodology)
 * Traditional Approach
   * Users search for recipes manually online.
