@@ -56,7 +56,7 @@ In the ".streamlit" folder: Have two files 1. "config.toml" and 2. "secrets.toml
 
 <br>
 
-# Visualization (Streamlit + Plotly)
+## Visualization (Streamlit + Plotly)
 
 Chef-AI uses **Streamlit** and **Plotly** to help users explore Thai recipes and ingredients in a more visual and interactive way, especially on the page **“For you menu”**.
 
