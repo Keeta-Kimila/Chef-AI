@@ -9,7 +9,7 @@ st.set_page_config(page_title="Menu Analyzer", page_icon="📊")
 # APPLY THEME
 inject_food_theme()
 
-col1, col2 = st.columns([1, 2])
+col1, col2 = st.columns([1, 1.95])
 with col1:
     with st.container(border=True):
         st.page_link("main.py", label="**Back to Recipe Book**", icon="🏠", width="stretch")
