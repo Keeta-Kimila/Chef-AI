@@ -108,7 +108,14 @@ else:
 
 try:
     df_result = con.execute(table_query).fetchdf()
-    st.dataframe(df_result, use_container_width=True)
+    
+    # --- FIX: START INDEX FROM 1 ---
+    # Pandas defaults to 0, so we just add 1 to the whole index
+    df_result.index = df_result.index + 1 
+    
+    # Display with width="stretch" (fixing the warning you saw earlier)
+    st.dataframe(df_result, width="stretch")
+    
 except Exception as e:
     st.error(f"Error fetching data: {e}")
 
