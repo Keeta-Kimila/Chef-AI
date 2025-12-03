@@ -40,6 +40,9 @@ To make Thai cooking accessible to everyone, regardless of where they are. Our g
 
 - Continuous Learning: The system learns from user feedback to improve future recipe and substitution recommendations.
 
+<br>
+
+
 ## How to use
 
 Please create a folder with streamlit installed (pip install streamlit)
