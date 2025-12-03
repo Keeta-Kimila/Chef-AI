@@ -1,15 +1,14 @@
 import streamlit as st
 import duckdb
 from streamlit_gsheets import GSheetsConnection
-# Import both the renderer and the theme injector
 from chat_mode import render_ai_chat, inject_food_theme
 
 st.set_page_config(
     page_title="Best Thai Recipe",
-    page_icon="🌶️", # Updated icon to match food theme
+    page_icon="🌶️", 
 )
 
-# --- APPLY VISUAL THEME ---
+# APPLY THEME
 inject_food_theme()
 
 @st.cache_resource
@@ -31,10 +30,13 @@ st.write("# Best Thai recipe with any ingredients! 🥘")
 st.sidebar.title("Recipe Book 📖")
 st.sidebar.write("Select a dish below:")
 
+# Dynamic styling for intro box
+box_bg = "#2C2C2C" if st.session_state.get('dark_mode', False) else "rgba(230, 126, 34, 0.1)"
+text_col = "#E0E0E0" if st.session_state.get('dark_mode', False) else "#2C3E50"
 
 st.markdown(
-    """
-    <div style="background-color: rgba(230, 126, 34, 0.1); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+    f"""
+    <div style="background-color: {box_bg}; color: {text_col}; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
     Our website allows anyone from any part of the world to be able to make Thai cuisine
     , with our AI helper, any ingredients that are Thai but are unable to be found in your countries
     can be substituted with the help of our AI chef guidance!
@@ -106,10 +108,6 @@ if selected_dish:
             st.info("No instructions available.")
 
 st.divider()
-
-# ==============================================================================
-# COMBINED CHAT CODE STARTS HERE
-# ==============================================================================
 
 if 'chat_enabled' not in st.session_state:
     st.session_state.chat_enabled = False
