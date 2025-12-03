@@ -1,5 +1,10 @@
 # Chef-AI: Your Personal Thai Food Assistant
-Missing Thai food but don’t know how to cook or adjust the flavors? Let Chef-AI guide you!
+This is a personal group project with the aim of sharing the culture of Thai cuisine with the world, by removing the biggest barrier to entry: ingredient availability.
+
+With the help of our AI, focusing on its specialization in harmony of sweet, sour, salty and spicy flavors, as well as its wide knowledge in ingredient substitution, you will be able to create any Thai dish with ingredients widely availabe in your country!
+
+The dataset have 145 Thai food, including its ingredients and how to make said food, as well as a visualization analysis of food and ingredients.
+Users will be able to search and find the Thai food they want, and recreate it with the help of our personal AI Chef.
 
 <br>
 <br>
