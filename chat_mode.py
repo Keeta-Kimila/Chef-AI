@@ -8,7 +8,7 @@ def inject_food_theme():
     """
     # --- 1. THEME TOGGLE LOGIC ---
     if 'dark_mode' not in st.session_state:
-        st.session_state.dark_mode = True # Default to Dark Mode for better initial impression
+        st.session_state.dark_mode = False # Default to Dark Mode for better initial impression
 
     with st.sidebar:
         st.session_state.dark_mode = st.toggle("🌙 Dark Mode", value=st.session_state.dark_mode)
@@ -195,7 +195,7 @@ def render_ai_chat(dish_data):
                     contents=gemini_history,
                     config=types.GenerateContentConfig(
                         system_instruction=system_instruction,
-                        thinking_config=types.ThinkingConfig(thinking_budget=-1)
+                        thinking_config=types.ThinkingConfig(thinking_budget=0)
                     )
                 )
                 
