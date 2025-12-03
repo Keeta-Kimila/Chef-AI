@@ -7,16 +7,17 @@ The dataset have 145 Thai food, including its ingredients and how to make said f
 Users will be able to search and find the Thai food they want, and recreate it with the help of our personal AI Chef.
 
 <br>
-<br>
 
 # Our Issue and Motivation
 The team want to create something unique, as Thai people. We want to share the Thai cuisine, which is loved worldwide for its flavors, but many people lack the cooking skills and knowledge of proper condiments, which can result in unsatisfying results.
 We want to create something that can be used to help solve this problem and spread the Thai cullinary, and recipe that we, Thai people, have been enjoying in our everyday's life.
 
+<br>
 
 # Objective
 Make Thai cooking accessible to everyone, whether they are from a country that is hard to find Thai ingredients and help suggest adjustments to ingredients that will still deliver Thai cuisine while keeping the ingredients local to their country of origin
 
+<br>
 # Solution (Methodology)
 * Traditional Approach
   * Users search for recipes manually online.
