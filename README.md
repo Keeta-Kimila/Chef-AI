@@ -40,5 +40,14 @@ To make Thai cooking accessible to everyone, regardless of where they are. Our g
 
 - Continuous Learning: The system learns from user feedback to improve future recipe and substitution recommendations.
 
+## How to use
 
+Please create a folder with streamlit installed (pip install streamlit)
+
+Have "main.py" and "chat_mode.py" in the folder.
+In the folder, create a "pages" folder and ".streamlit" folder.
+
+In the pages folder:
+
+In the .streamlit folder:
 
