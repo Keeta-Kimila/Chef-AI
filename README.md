@@ -50,9 +50,9 @@ Please create a folder with streamlit installed (pip install streamlit)
 Have "main.py" and "chat_mode.py" in the folder.
 In the folder, create a "pages" folder and ".streamlit" folder.
 
-In the pages folder:
+In the "pages" folder: Have two files 1. "For_You_Menu.py" and 2. "Youtube_Chef.py"
 
-In the .streamlit folder:
+In the ".streamlit" folder: Have two files 1. "config.toml" and 2. "secrets.toml"
 
 <br>
 
