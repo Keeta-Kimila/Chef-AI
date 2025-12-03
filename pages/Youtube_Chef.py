@@ -6,26 +6,43 @@ from urllib.parse import urlparse, parse_qs
 
 st.set_page_config(page_title="YouTube AI Chef", page_icon="🎥")
 
+# --- APPLY VISUAL THEME (Local Injection for Standalone Safety) ---
+st.markdown("""
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Lato:wght@400;700&display=swap');
+    html, body, [class*="css"] { font-family: 'Lato', sans-serif; }
+    h1, h2, h3 { font-family: 'Merriweather', serif !important; color: #D35400 !important; font-weight: 700 !important; }
+    .stButton > button { background-color: #E67E22; color: white !important; border-radius: 12px; border: 1px solid #D35400; font-family: 'Lato', sans-serif; font-weight: bold; }
+    .stButton > button:hover { background-color: #D35400; transform: scale(1.02); }
+    .stTextInput > div > div > input { border-radius: 10px; border: 1px solid #F5B041; }
+    [data-testid="stSidebar"] { background-color: #FEF9E7; border-right: 1px solid #F5CBA7; }
+    @media (prefers-color-scheme: dark) { [data-testid="stSidebar"] { background-color: #1A1A1A; border-right: 1px solid #333; } }
+</style>
+""", unsafe_allow_html=True)
+
 # Add a button to go back home
 col1, col2 = st.columns([1, 2])
 with col1:
     with st.container(border=True):
-        st.page_link("main.py", label="**Back to Recipe Book**", icon="🏠",use_container_width=True)
+        st.page_link("main.py", label="**Back to Recipe Book**", icon="🏠", width="stretch")
 st.divider()
 
 st.title("🎥 YouTube to Recipe Converter")
-st.markdown("Paste a cooking video link, and I'll extract the recipe AND chat with you about it!")
+st.markdown(
+    """
+    <div style="background-color: rgba(230, 126, 34, 0.1); padding: 15px; border-radius: 10px;">
+    Paste a cooking video link below, and I'll extract the recipe AND chat with you about it!
+    </div>
+    """, unsafe_allow_html=True
+)
 
 # --- 1. SETUP & SESSION STATE ---
-# We need to store the extracted recipe in memory so the chatbot can access it later.
 if "current_video_recipe" not in st.session_state:
-    st.session_state.current_video_recipe = None # Will hold the recipe text
+    st.session_state.current_video_recipe = None 
 
-# Initialize chat history if not present
 if "youtube_chat_history" not in st.session_state:
     st.session_state.youtube_chat_history = []
 
-# Helper to get Video ID
 def get_video_id(url):
     query = urlparse(url)
     if query.hostname == 'youtu.be':
@@ -48,16 +65,13 @@ if st.button("Extract Recipe 👨‍🍳") and video_url:
     else:
         with st.spinner("Watching video and taking notes..."):
             try:
-                # A. Get Transcript
                 transcript_list = YouTubeTranscriptApi.get_transcript(video_id, languages=['th', 'en'])
                 full_text = " ".join([t['text'] for t in transcript_list])
                 
-                # B. Call Gemini to Extract Recipe
                 if "geminiapi" in st.secrets.connections:
                     api_key = st.secrets.connections.geminiapi["GEMINI_API_KEY"]
                     client = genai.Client(api_key=api_key)
                     
-                    # We ask for a structured output so it's easy to feed back into the chatbot
                     sys_instruct = (
                         "Role: You are an expert Chef. "
                         "Task: Read the following video transcript and extract the recipe. "
@@ -72,10 +86,8 @@ if st.button("Extract Recipe 👨‍🍳") and video_url:
                         ),
                     )
                     
-                    # SAVE TO SESSION STATE (Crucial Step!)
                     st.session_state.current_video_recipe = response.text
                     
-                    # Reset chat history for a new video
                     st.session_state.youtube_chat_history = [
                         {"role": "model", "content": "I've analyzed the video! Ask me anything about this recipe."}
                     ]
@@ -87,7 +99,6 @@ if st.button("Extract Recipe 👨‍🍳") and video_url:
                 st.error(f"Could not process video. (Note: This only works on videos with captions). Error: {e}")
 
 # --- 4. DISPLAY RESULTS & CHATBOT ---
-# Only show this section if we have a recipe loaded in memory
 if st.session_state.current_video_recipe:
     
     st.divider()
@@ -99,14 +110,11 @@ if st.session_state.current_video_recipe:
     st.markdown("Ask for substitutions, tips, or clarification about the video you just watched.")
 
     # --- CHATBOT LOGIC ---
-    
-    # 1. Setup Client (Re-init for chat context)
     try:
         gemini_client = genai.Client(api_key=st.secrets.connections.geminiapi["GEMINI_API_KEY"])
     except Exception:
         st.stop()
 
-    # 2. Dynamic System Instruction based on the VIDEO recipe
     recipe_context = st.session_state.current_video_recipe
     system_instruction = (
         "Role: You are an expert Thai chef. "
@@ -116,29 +124,23 @@ if st.session_state.current_video_recipe:
         "Be polite and helpful."
     )
 
-    # 3. Display Chat History
     for message in st.session_state.youtube_chat_history:
         with st.chat_message(message['role']):
             st.markdown(message['content'])
 
-    # 4. Handle User Input
     if prompt := st.chat_input('Ask about this video recipe...'):
         
-        # User Message
         st.session_state.youtube_chat_history.append({'role':'user','content':prompt})
         with st.chat_message('user'):
             st.write(prompt)
             
-        # Model Message
         with st.chat_message('model'):
-            # Build history for API
             gemini_history = []
             for message in st.session_state.youtube_chat_history:
                 role = "user" if message["role"] == "user" else "model"
                 gemini_history.append(types.Content(role=role, parts=[types.Part(text=message["content"])]))
 
             try:
-                # Call API
                 response_stream = gemini_client.models.generate_content_stream(
                     model="gemini-2.5-flash", 
                     contents=gemini_history,
@@ -147,16 +149,13 @@ if st.session_state.current_video_recipe:
                     )
                 )
                 
-                # 2. DEFINE A HELPER TO EXTRACT TEXT (This is new!)
                 def stream_parser(stream):
                     for chunk in stream:
                         if chunk.text:
                             yield chunk.text
 
-                # 3. Stream the CLEAN text
                 response_content = st.write_stream(stream_parser(response_stream))
                     
-                # 4. Save to history
                 st.session_state.youtube_chat_history.append({'role':'model','content':response_content})
 
             except Exception as e:
