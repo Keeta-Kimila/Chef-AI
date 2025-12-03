@@ -21,16 +21,23 @@ To make Thai cooking accessible to everyone, regardless of where they are. Our g
 
 
 ## Solution (Methodology)
-* Traditional Approach
-  * Users search for recipes manually online.
-  * Follow standard recipes with fixed ingredients and instructions.
-  * Limited flexibility: users may struggle to adapt flavors to personal preference.
+The Challenge: Traditional Recipes
 
-* AI Add-On (Chef-AI):
-  * Uses AI to analyze user preferences (spiciness, sweetness, dietary restrictions).
-  * Suggests recipes with customizable ingredients and condiments.
-  * Can provide step-by-step cooking guidance.
-  * Learns from user feedback to improve future suggestions.
+    Manual Search: Users have to manually scour the internet for recipes that match their dietary needs.
+
+    Rigid Instructions: Standard recipes list fixed ingredients, leaving home cooks stranded if they can't find a specific item.
+
+    Lack of Flexibility: Users often struggle to adapt flavors (like spiciness or sweetness) to their personal preference without ruining the dish.
+
+The Solution: Chef-AI
+
+    Personalized Analysis: Uses AI to analyze user preferences, including spiciness levels, flavor profiles, and dietary restrictions.
+
+    Smart Substitution: Automatically suggests recipes with customizable ingredients, offering viable local alternatives for hard-to-find items.
+
+    Interactive Guidance: Provides step-by-step cooking instructions tailored to the modified recipe.
+
+    Continuous Learning: The system learns from user feedback to improve future recipe and substitution recommendations.
 
 
 
