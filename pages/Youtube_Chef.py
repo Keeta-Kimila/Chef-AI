@@ -3,7 +3,6 @@ from google import genai
 from google.genai import types
 from youtube_transcript_api import YouTubeTranscriptApi
 from urllib.parse import urlparse, parse_qs
-# IMPORT SHARED THEME
 from chat_mode import inject_food_theme
 
 st.set_page_config(page_title="YouTube AI Chef", page_icon="🎥")
@@ -12,7 +11,7 @@ st.set_page_config(page_title="YouTube AI Chef", page_icon="🎥")
 inject_food_theme()
 
 # Add a button to go back home
-col1, col2 = st.columns([1, 2])
+col1, col2 = st.columns([1, 1.95])
 with col1:
     with st.container(border=True):
         st.page_link("main.py", label="**Back to Recipe Book**", icon="🏠", width="stretch")
