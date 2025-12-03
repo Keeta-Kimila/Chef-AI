@@ -22,7 +22,7 @@ To make Thai cooking accessible to everyone, regardless of where they are. Our g
 
 ## Solution (Methodology)
 
-###The Challenge: Traditional Recipes
+### The Challenge: Traditional Recipes
 
 Manual Search: Users have to manually scour the internet for recipes that match their dietary needs.
 
@@ -30,7 +30,7 @@ Rigid Instructions: Standard recipes list fixed ingredients, leaving home cooks 
 
 Lack of Flexibility: Users often struggle to adapt flavors (like spiciness or sweetness) to their personal preference without ruining the dish.
 
-###The Solution: Chef-AI
+### The Solution: Chef-AI
 
 Personalized Analysis: Uses AI to analyze user preferences, including spiciness levels, flavor profiles, and dietary restrictions.
 
