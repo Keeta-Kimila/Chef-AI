@@ -178,6 +178,7 @@ def render_ai_chat(dish_data):
                 All responses must be written in English (United Kingdom).,
                 Do not fabricate culinary facts, ingredient interactions, or nonexistent techniques (avoiding hallucinations). If you lack sufficient information, state what additional detail is needed.,
                 The initial guidance provided must be based specifically on the Recipe_Data provided above, but can be substituted if the recipe does not make sense or is not up to Thai standard.
+                Do not talk or give facts about other information other than cooking/Thailand. Try to sway the users back to culinary.
     """
 
     if 'chat_messages' not in st.session_state:
