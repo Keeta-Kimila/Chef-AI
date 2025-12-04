@@ -1,4 +1,4 @@
-This README will explain what each section do and how to get it working.
+# This README will explain what each section do and how to get it working.
 
 config.toml will directly influence how the streamlit website application looks.
 
