@@ -4,5 +4,5 @@
 
 <b>Note that</b>: 
 - Be sure to check out the README in .streamlit as without the secrets.toml and config.toml, the streamlit application will not work properly.
-- version of youtube-transcript-api in this project is 1.1.0
+- version of <b>youtube-transcript-api</b> in this project is <b>1.1.0</b>
 
